@@ -2,20 +2,20 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var userSchema = new Schema({
-    firstName: string,
-    lastName: string,
-    email:string,
+    firstName: String,
+    lastName: String,
+    email:String,
     Address:{
-        street:string,
-        city:string,
-        state:string,
-        country: string,
-        zip:number
+        street:String,
+        city:String,
+        state:String,
+        country: String,
+        zip:Number
     },
-    userName:string,
-    password:string,
-    role:string,
-    status:string 
+    userName:String,
+    password:String,
+    role:String,
+    status:String 
 });
 
-mongoose.model('user',userSchema);
+mongoose.model('User',userSchema);

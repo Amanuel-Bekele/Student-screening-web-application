@@ -2,18 +2,18 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var studentSchema = new Schema({
-    firstName: string,
-    lastName: string,
-    email:string,
+    firstName: String,
+    lastName: String,
+    email:String,
     Address:{
-        street:string,
-        city:string,
-        state:string,
-        country: string,
-        zip:number
+        street:String,
+        city:String,
+        state:String,
+        country: String,
+        zip:Number
     },
-    applicationCode:string,
-    
+    applicationCode:String,
+
 });
 
-mongoose.model('student',studentSchema);
+mongoose.model('Student',studentSchema);

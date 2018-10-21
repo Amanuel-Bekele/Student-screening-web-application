@@ -1,40 +1,34 @@
 var express = require('express');
 var router = express.Router(); 
 
-/* GET users listing. */
+/* GET questions listing. */
 router.get('/',function(req, res) {
-  req.jwt.verify(req.token,'SecretKey',(error,authUser)=>{
-    if(error) res.status(500).send(error); 
-    req.mongoose.model('User').find({},function(err,users){
-      res.send({users,authUser});
-    })
+  console.log("questions")
+  req.jwt.verify(req.token,'SecretKey',(error,authData)=>{ 
+  })
+  req.mongoose.model('Question').find({},function(err,users){
+    res.send(users);
   })
 });
 
-/* GET inactive users. */
+/* GET inactive questions. */
 router.get('/inactive', function(req, res) { 
-  req.mongoose.model('User').find({"status":"inactive"},function(err,users){
+  req.mongoose.model('Question').find({"status":"inactive"},function(err,users){
     res.send(users);
   })
 });
 
-/* GET user with specified Id. */
+/* GET questions with specified Id. */
 router.get('/:id', function(req, res) { 
-  req.mongoose.model('User').findOne({_id:req.params.id},function(err,users){
+  req.mongoose.model('Question').findOne({_id:req.params.id},function(err,users){
     res.send(users);
   })
 });
 
-/* GET user with specified username. */
-router.get('/userName/:userName', function(req, res) {
-  req.mongoose.model('User').findOne({userName:req.params.userName},function(err,users){
-    res.send(users);
-  })
-});
 
-/* Creating new user */
+/* Creating new questions */
 router.post('/', function(req, res) {
-    const User = req.mongoose.model('User');
+    const User = req.mongoose.model('Question');
     const newUser = new User(req.body);
     newUser.save((err)=>{ 
       if (err) {
@@ -47,9 +41,9 @@ router.post('/', function(req, res) {
 
 
 
-/* update user with username */
-router.put('/:username', function(req, res) {
-  req.mongoose.model('User').update({"userName":req.params.username},
+/* update questions with id */
+router.put('/:id', function(req, res) {
+  req.mongoose.model('Question').update({"userName":req.params.username},
     req.body, 
     (err, user) => { 
           if (err) return res.status(500).send(err); 
@@ -61,9 +55,9 @@ router.put('/:username', function(req, res) {
     ); 
 });
 
-/* Toggle user status */
+/* Toggle question status */
 router.patch('/status/:id/:status', function(req, res) {
-  req.mongoose.model('User').findByIdAndUpdate({"_id":req.params.id},{$set:{"status":req.params.status}},
+  req.mongoose.model('Question').findByIdAndUpdate({"_id":req.params.id},{$set:{"status":req.params.status}},
   (err, user) => { 
         if (err) return res.status(500).send(err); 
          

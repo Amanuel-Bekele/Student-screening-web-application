@@ -68,7 +68,7 @@ function verifyToken(req, res, next){
   if( bearerHeader != undefined){
     const token = bearerHeader.split(' ')[1];  
     jwt.verify(token,'SecretKey',(error,authUser)=>{
-      console.log("AUTH USER ",error+"\n\n"+ JSON.stringify(authUser))
+      
       if(error || authUser==null){
         res.status(500).send(error);
       } else{

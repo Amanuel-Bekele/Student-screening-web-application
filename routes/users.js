@@ -4,11 +4,28 @@ var router = express.Router();
 
 
 /* GET users listing. */
-router.get('/', function(req, res) {
+router.get('/', verifyToken,function(req, res) {
+  req.jwt.verify(req.token,'SecretKey',(error,authData)=>{
+    console.log("USerrrrr  ",authData);
+  })
   req.mongoose.model('User').find({},function(err,users){
     res.send(users);
   })
 });
+
+function verifyToken(req,res,next){
+  const bearerHeader = req.headers['authorization']; 
+  
+  if( bearerHeader != undefined){
+    const token = bearerHeader.split(' ')[1];
+    console.log('token  ',token)
+    req.token = token;
+    next();
+  }else{
+    res.status(403).send({"responseMessage":"Unathorized to access this api"})
+  }
+  
+}
 
 /* GET inactive users. */
 router.get('/inactive', function(req, res) { 

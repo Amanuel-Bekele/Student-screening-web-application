@@ -39,7 +39,7 @@ app.use(function(req, res, next){
   req.jwt = jwt;
   next();
 });
- 
+
 app.use('/', indexRouter);
 app.use('/api/v1/users',verifyToken, usersRouter);
 app.use('/api/v1/questions',verifyToken, questionsRouter);
@@ -66,9 +66,17 @@ function verifyToken(req, res, next){
   const bearerHeader = req.headers['authorization']; 
   
   if( bearerHeader != undefined){
-    const token = bearerHeader.split(' ')[1]; 
-    req.token = token;
-    next();
+    const token = bearerHeader.split(' ')[1];  
+    jwt.verify(token,'SecretKey',(error,authUser)=>{
+      console.log("AUTH USER ",error+"\n\n"+ JSON.stringify(authUser))
+      if(error || authUser==null){
+        res.status(500).send(error);
+      } else{
+        req.authUser = authUser;
+        next(); 
+      }
+      
+    });
   }else{
     res.status(403).send({"responseMessage":"Unathorized to access this api"})
   }

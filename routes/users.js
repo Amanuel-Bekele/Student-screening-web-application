@@ -35,8 +35,11 @@ router.get('/userName/:userName', function(req, res) {
 router.post('/', function(req, res) {
     const User = req.mongoose.model('User');
     const newUser = new User(req.body);
-    newUser.save((err)=>{
-      if (err) return res.status(500).send(err);
+    newUser.save((err)=>{ 
+      if (err) {
+        const response =err.code==11000? {"responseCode":"10","responseMessage":"Duplicate username and/or email"}:err;
+        return  res.status(403).send(response);
+      }
       return res.status(200).send(newUser);
     });
 });

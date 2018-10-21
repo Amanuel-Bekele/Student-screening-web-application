@@ -4,7 +4,7 @@ var Schema = mongoose.Schema;
 var userSchema = new Schema({
     firstName: String,
     lastName: String,
-    email:String,
+    email:{ type: String, unique: true },
     Address:{
         street:String,
         city:String,
@@ -12,7 +12,7 @@ var userSchema = new Schema({
         country: String,
         zip:Number
     },
-    userName:String,
+    userName:{ type: String, unique: true },
     password:String,
     role:String,
     status:String 

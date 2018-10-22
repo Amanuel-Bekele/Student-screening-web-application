@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
 var questionsRouter = require('./routes/questions');
 var examsRouter = require('./routes/examTokens');
+var studentsRouter = require('./routes/students');
 
 var mongoose = require('mongoose');
 
@@ -45,6 +46,7 @@ app.use('/', indexRouter);
 app.use('/api/v1/users',verifyToken, usersRouter);
 app.use('/api/v1/questions',verifyToken, questionsRouter);
 app.use('/api/v1/exams',verifyToken, examsRouter);
+app.use('/api/v1/students',verifyToken, studentsRouter);
 app.use('/login', loginRouter);
 
 

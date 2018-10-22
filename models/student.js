@@ -11,9 +11,8 @@ var studentSchema = new Schema({
         state:String,
         country: String,
         zip:Number
-    },
-    applicationCode:String,
+    }
 
 });
 
-module.exports =  mongoose.model('student',studentSchema);
+module.exports =  mongoose.model('Student',studentSchema);

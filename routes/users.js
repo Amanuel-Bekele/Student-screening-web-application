@@ -1,31 +1,16 @@
-var express = require('express');
-var router = express.Router();
-// const User = require(__dirname+'/models/'+'user.js');
-
+var express = require('express'); 
+var router = express.Router(); 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const passwordUtils = require('./../utils/passwordutils');
 
 /* GET users listing. */
-router.get('/', verifyToken,function(req, res) {
-  req.jwt.verify(req.token,'SecretKey',(error,authData)=>{
-    console.log("USerrrrr  ",authData);
-  })
-  req.mongoose.model('User').find({},function(err,users){
-    res.send(users);
-  })
+router.get('/',function(req, res) { 
+    req.mongoose.model('User').find({},function(err,users){
+      const authUser = req.authUser; 
+      res.send({users,authUser}); 
+  });
 });
-
-function verifyToken(req,res,next){
-  const bearerHeader = req.headers['authorization']; 
-  
-  if( bearerHeader != undefined){
-    const token = bearerHeader.split(' ')[1];
-    console.log('token  ',token)
-    req.token = token;
-    next();
-  }else{
-    res.status(403).send({"responseMessage":"Unathorized to access this api"})
-  }
-  
-}
 
 /* GET inactive users. */
 router.get('/inactive', function(req, res) { 
@@ -51,13 +36,16 @@ router.get('/userName/:userName', function(req, res) {
 /* Creating new user */
 router.post('/', function(req, res) {
     const User = req.mongoose.model('User');
-    const newUser = new User(req.body);
+    const newUser = new User(req.body);  
+    const hashedPassword = hashPassword(req.body.password); 
+    newUser.password = hashedPassword;
+    
     newUser.save((err)=>{ 
       if (err) {
         const response =err.code==11000? {"responseCode":"10","responseMessage":"Duplicate username and/or email"}:err;
         return  res.status(403).send(response);
-      }
-      return res.status(200).send(newUser);
+      } 
+        return res.status(200).send(newUser);
     });
 });
 
@@ -88,4 +76,11 @@ router.patch('/status/:id/:status', function(req, res) {
   );
 });
  
+
+ function hashPassword(password){ 
+    const salt = bcrypt.genSaltSync(saltRounds)
+    return bcrypt.hashSync(password, salt)    
+} 
+ 
+
 module.exports = router;

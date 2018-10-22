@@ -8,6 +8,7 @@ var fs = require('fs');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
+var questionsRouter = require('./routes/questions');
 
 var mongoose = require('mongoose');
 
@@ -38,9 +39,10 @@ app.use(function(req, res, next){
   req.jwt = jwt;
   next();
 });
- 
+
 app.use('/', indexRouter);
-app.use('/api/v1/users', usersRouter);
+app.use('/api/v1/users',verifyToken, usersRouter);
+app.use('/api/v1/questions',verifyToken, questionsRouter);
 app.use('/login', loginRouter);
 
 
@@ -60,7 +62,25 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-
+function verifyToken(req, res, next){
+  const bearerHeader = req.headers['authorization']; 
+  
+  if( bearerHeader != undefined){
+    const token = bearerHeader.split(' ')[1];  
+    jwt.verify(token,'SecretKey',(error,authUser)=>{
+      
+      if(error || authUser==null){
+        res.status(500).send(error);
+      } else{
+        req.authUser = authUser;
+        next(); 
+      }
+      
+    });
+  }else{
+    res.status(403).send({"responseMessage":"Unathorized to access this api"})
+  }
+}
 
 app.listen(8080,()=>{console.log('App started on port 8080')});
 

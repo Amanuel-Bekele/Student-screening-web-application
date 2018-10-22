@@ -15,7 +15,7 @@ router.get('/inactive', function(req, res) {
   })
 });
 
-/* GET inactive questions. */
+/* GET active questions. */
 router.get('/active', function(req, res) { 
   req.mongoose.model('Question').find({"status":"active"},function(err,users){
     res.send(users);

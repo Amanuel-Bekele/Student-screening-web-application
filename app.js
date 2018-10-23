@@ -11,6 +11,7 @@ var loginRouter = require('./routes/login');
 var questionsRouter = require('./routes/questions');
 var examsRouter = require('./routes/examTokens');
 var studentsRouter = require('./routes/students');
+var cors = require('cors')
 
 var mongoose = require('mongoose');
 
@@ -19,7 +20,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
-
+app.use(cors())
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -36,7 +37,7 @@ fs.readdirSync(__dirname+'/models').forEach(function(filename){
   }
 });
 
-app.use(function(req, res, next){ 
+app.use(function(req, res, next){
   req.mongoose = mongoose;
   req.jwt = jwt;
   next();
@@ -67,19 +68,19 @@ app.use(function(err, req, res, next) {
 });
 
 function verifyToken(req, res, next){
-  const bearerHeader = req.headers['authorization']; 
-  
+  const bearerHeader = req.headers['authorization'];
+
   if( bearerHeader != undefined){
-    const token = bearerHeader.split(' ')[1];  
+    const token = bearerHeader.split(' ')[1];
     jwt.verify(token,'SecretKey',(error,authUser)=>{
-      
+
       if(error || authUser==null){
         res.status(500).send(error);
       } else{
         req.authUser = authUser;
-        next(); 
+        next();
       }
-      
+
     });
   }else{
     res.status(403).send({"responseMessage":"Unathorized to access this api"})
